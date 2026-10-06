@@ -30,7 +30,12 @@ async def request_logging_middleware(request: Request, call_next):
         # Last line of defense: log the full stack trace, return a generic 500.
         logger.exception(
             "unhandled_exception",
-            extra={"fields": {"request_id": request_id, "path": request.url.path}},
+            extra={
+                "fields": {
+                    "request_id": request_id,
+                    "path": request.url.path,
+                }
+            },
         )
         response = JSONResponse(
             status_code=500,
@@ -45,6 +50,7 @@ async def request_logging_middleware(request: Request, call_next):
 
     latency_ms = round((time.perf_counter() - start) * 1000, 2)
     response.headers["X-Request-ID"] = request_id
+
     logger.info(
         "request_completed",
         extra={
@@ -57,4 +63,5 @@ async def request_logging_middleware(request: Request, call_next):
             }
         },
     )
+
     return response

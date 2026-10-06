@@ -10,3 +10,4 @@ class HealthResponse(BaseModel):
 class ReadyResponse(BaseModel):
     status: Literal["ready", "not_ready"]
     model_loaded: bool
+    database_ok: bool

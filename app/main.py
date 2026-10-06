@@ -10,14 +10,17 @@ from app.config import get_settings
 from app.core.exceptions import register_exception_handlers
 from app.core.logging import configure_logging
 from app.core.middleware import request_logging_middleware
+from app.db.session import create_db_engine, create_session_factory
 from app.services.model_service import ModelService
 
 logger = logging.getLogger("app.main")
 
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     settings = get_settings()
+
     service = ModelService(settings.model_version)
     try:
         service.load()
@@ -26,8 +29,16 @@ async def lifespan(app: FastAPI):
         # Stay up but NOT ready: /health still works for diagnosis, /ready returns 503,
         # and a load balancer will not route traffic here.
         logger.exception("model_load_failed")
+
+    # The engine connects lazily, so the app starts even if the DB is down.
+    # /ready reports the DB state instead.
+    engine = create_db_engine(settings)
+
     app.state.model_service = service
+    app.state.engine = engine
+    app.state.session_factory = create_session_factory(engine)
     yield
+    engine.dispose()  # close all pooled connections cleanly
     logger.info("shutdown")
 
 

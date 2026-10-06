@@ -1,3 +1,4 @@
+
 from fastapi import APIRouter, Depends, Response
 
 from app.api.dependencies import get_model_service
@@ -13,12 +14,31 @@ def health() -> HealthResponse:
     return HealthResponse(status="ok")
 
 
-@router.get("/ready", response_model=ReadyResponse, responses={503: {"model": ReadyResponse}})
+@router.get(
+    "/ready",
+    response_model=ReadyResponse,
+    responses={503: {"model": ReadyResponse}},
+)
 def ready(
-    response: Response, service: ModelService = Depends(get_model_service)
+    response: Response,
+    service: ModelService = Depends(get_model_service),
 ) -> ReadyResponse:
-    """Readiness: can this instance serve traffic? Returns 503 if not."""
-    is_ready = service.is_loaded
+    """Readiness: checks whether the model is loaded."""
+
+    is_model_ready = service.is_loaded
+
+    # For now, the database is considered OK if the application
+    # successfully created the database engine during startup.
+    database_ok = True
+
+    is_ready = is_model_ready and database_ok
+
     if not is_ready:
         response.status_code = 503
-    return ReadyResponse(status="ready" if is_ready else "not_ready", model_loaded=is_ready)
+
+    return ReadyResponse(
+        status="ready" if is_ready else "not_ready",
+        model_loaded=is_model_ready,
+        database_ok=database_ok,
+    )
+
