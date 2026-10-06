@@ -1,0 +1,47 @@
+{
+  "model_version": "v1",
+  "trained_at": "2026-10-06T13:11:26.948830+00:00",
+  "dataset": {
+    "name": "CLINC150 (data_full.json)",
+    "citation": "Larson et al., 2019, EMNLP-IJCNLP",
+    "sha256": "36923c3705a59e08fe9c3883d8bc2dd966ef93e22cb78ac41171782a698d56e0",
+    "sizes": {
+      "train": 15000,
+      "val": 3000,
+      "test": 4500,
+      "oos_val": 100,
+      "oos_test": 1000
+    }
+  },
+  "num_intents": 150,
+  "hyperparameters": {
+    "tfidf_ngram_range": [
+      1,
+      2
+    ],
+    "tfidf_sublinear_tf": true,
+    "logreg_C": 10.0,
+    "logreg_max_iter": 1000
+  },
+  "confidence_threshold": 0.39,
+  "threshold_selection": {
+    "method": "maximize mean(in_scope_accuracy, oos_recall) on validation data",
+    "validation_score": 0.8243333333333334,
+    "validation_metrics": {
+      "in_scope_accuracy": 0.8186666666666667,
+      "false_rejection_rate": 0.14566666666666667,
+      "oos_recall": 0.83
+    }
+  },
+  "test_metrics": {
+    "in_scope_accuracy": 0.8257777777777778,
+    "false_rejection_rate": 0.142,
+    "oos_recall": 0.861,
+    "raw_accuracy_no_threshold": 0.9097777777777778,
+    "macro_f1_no_threshold": 0.9090614282627458
+  },
+  "environment": {
+    "python": "3.14.2",
+    "scikit_learn": "1.8.0"
+  }
+}
