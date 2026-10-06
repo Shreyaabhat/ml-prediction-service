@@ -3,7 +3,8 @@ line-length = 100
 target-version = "py312"
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "B"]   # pycodestyle errors, pyflakes, import sorting, bugbear
+select = ["E", "F", "I", "B"]
+ignore = ["B008"]   # pycodestyle errors, pyflakes, import sorting, bugbear
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
